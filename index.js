@@ -6,6 +6,8 @@ let loadingNewJoke = false;
 
 function GetJokeFromServer(){
     
+    if(loadingNewJoke) return;
+
     loadingNewJoke = true;
     setTimeout(() => {
         if(!loadingNewJoke) return;
@@ -29,23 +31,29 @@ function GetJokeFromServer(){
 
 function AddJokeToJokeBox(obj) {
 
-    loadingNewJoke = false;
     SetLoadingMessageActive(false);
 
     currentJokeObj = obj;
     let jokeBox = CreateNewJokeBox(currentJokeObj);
     SwipeCurrentBoxToLeft();
+    
     // Trigger animation on new jokeBox
     setTimeout(() => {
         jokeBox.classList.add("active");
     }, 10);
 
+    // Wait until animation is done
+    setTimeout(() => {
+    }, 100);
+    
     let currentPrevBoxes = container.querySelectorAll('.jokeBox.previous');
-
+    
     // Delete previous box in 2s
     setTimeout(() => {
         DestroyAllPreviousBoxes(currentPrevBoxes);
     }, 2000);
+    
+    loadingNewJoke = false;
 }
 
 function CreateNewJokeBox(obj){
@@ -101,15 +109,15 @@ function SetLoadingMessageActive(active) {
     const loadingBox = document.querySelector('.loadingBox');
 
     if (active) {    
-        // Get the position and size of the target element
+        // Get the position and size of container
         const rect = container.getBoundingClientRect();
 
-        // Position the loadingBox in the center of the target element
+        // Position the loadingBox in the center of the container
         const centerX = rect.left + rect.width / 2 + window.scrollX;
         const centerY = rect.top + rect.height / 2 + window.scrollY;
         const boxRect = loadingBox.getBoundingClientRect();
 
-        // Apply it to the floating element
+        // Apply it to the loadingBox
         loadingBox.style.position = 'absolute';
         loadingBox.style.top = `${centerY - boxRect.height / 2}px`;
         loadingBox.style.left = `${centerX - boxRect.width / 2}px`;
